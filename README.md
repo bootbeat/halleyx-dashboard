@@ -1,73 +1,174 @@
-# Halleyx Full Stack Engineer Challenge II -- Custom Dashboard Builder
+# Halleyx Full Stack Engineer Challenge II  
+## Custom Dashboard Builder – Admin Analytics MVP
+
+---
 
 ## Overview
 
-This project is a simplified implementation of a Custom Dashboard
-Builder for admin users. It allows administrators to create personalized
-analytics dashboards using configurable widgets such as KPI cards,
-charts, and order tables.
+This project is a functional MVP implementation of a Custom Dashboard Builder for admin users.  
+It enables administrators to dynamically configure analytics dashboards using KPI cards, chart widgets, and customer order tables.
 
-The application demonstrates core full‑stack concepts including UI state
-management, dynamic widget rendering, data integration, and responsive
-layout behaviour.
+The solution demonstrates full-stack integration, modular UI architecture, responsive layout behaviour, and real-time data aggregation from order data.
+
+---
+
+## Contents
+
+- Overview  
+- Features  
+- Tech Stack  
+- Project Structure  
+- How to Run  
+- Screenshots  
+- Notes  
+
+---
 
 ## Features
 
-### Admin Authentication
-
-Simple admin login screen\
-Demo credentials: Email: admin@halleyx.com\
-Password: admin123
+### Admin Login
+- Simple admin authentication screen  
+- Demo credentials  
+  - Email: admin@halleyx.com  
+  - Password: admin123  
 
 ### Dashboard Builder
+- Default empty dashboard state  
+- Configure dashboard mode  
+- Dynamically add widgets  
+  - KPI Card  
+  - Chart Widget  
+  - Orders Table  
+- Remove widgets  
+- Save dashboard layout  
 
-Default empty dashboard state\
-Configure Dashboard mode\
-Add and remove widgets dynamically\
-Save dashboard layout
+### Customer Order Module
+- Create order form with required fields  
+  - First Name  
+  - Last Name  
+  - Email  
+  - Product  
+  - Quantity  
+  - Unit Price  
+  - Status  
+- Automatic total calculation  
+- Delete order functionality  
+- Real-time dashboard updates  
 
-### Widgets
+### Analytics Widgets
 
-KPI Card\
-Displays aggregated revenue from customer orders\
-Updates automatically when new orders are created
+**KPI Widget**
+- Displays aggregated total revenue  
+- Updates dynamically from order data  
 
-Chart Widget\
-Pie chart showing product distribution\
-Bar chart showing order totals
-
-Orders Form\
-Create customer orders\
-Mandatory field validation\
-Auto calculation of total amount\
-Delete created orders\
-Real‑time dashboard data update
+**Chart Widget**
+- Pie chart visualization for product distribution  
+- Bar chart visualization for order comparison  
 
 ### Responsive Layout
+- Grid-based widget layout  
+- Works across desktop and smaller screen sizes  
 
-Grid‑based widget layout\
-Works across desktop and smaller screen sizes
+---
 
 ## Tech Stack
 
-Frontend: React (Vite)\
-Axios\
-Recharts
+**Frontend**
+- React (Vite)  
+- Axios  
+- Recharts  
 
-Backend: Node.js\
-Express
+**Backend**
+- Node.js  
+- Express  
+- In-memory data storage  
 
-## How to Run
+---
 
-Backend:
+## Project Structure
 
-cd server\
+```text
+halleyx-dashboard/
+│
+├── client/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── Dashboard.jsx
+│   │   ├── Login.jsx
+│   │   ├── Orders.jsx
+│   │   ├── KPI.jsx
+│   │   └── Chart.jsx
+│   │
+│   └── package.json
+│
+├── server/
+│   ├── server.js
+│   └── package.json
+│
+└── screenshots/
+    ├── login.png
+    ├── empty-dashboard.png
+    ├── configure-mode.png
+    ├── order-form.png
+    ├── kpi-widget.png
+    ├── chart-widget.png
+    └── final-layout.png
+```
+
+---
+
+## How to Run the Project
+
+### Start Backend
+
+```text
+cd server
 node server.js
+```
 
-Frontend:
+Backend runs at  
+http://localhost:5000  
 
-cd client\
-npm install\
+### Start Frontend
+
+```text
+cd client
+npm install
 npm run dev
+```
 
-App runs at http://localhost:5173
+Application runs at  
+http://localhost:5173  
+
+---
+
+## Screenshots
+
+### Admin Login  
+![Login](screenshots/login.png)
+
+### Empty Dashboard  
+![Empty](screenshots/empty-dashboard.png)
+
+### Configure Mode  
+![Configure](screenshots/configure-mode.png)
+
+### Customer Order Form  
+![Order](screenshots/order-form.png)
+
+### KPI Revenue Widget  
+![KPI](screenshots/kpi-widget.png)
+
+### Chart Analytics Widget  
+![Chart](screenshots/chart-widget.png)
+
+### Final Dashboard Layout  
+![Final](screenshots/final-layout.png)
+
+---
+
+## Notes
+
+This implementation focuses on delivering the core functional aspects of the dashboard builder challenge including widget configuration workflow, analytics visualization, and customer order integration.
+
+Enhancements such as persistent dashboard layout storage, advanced drag-grid snapping, and configurable widget settings panels can be implemented in future iterations.
