@@ -14,14 +14,13 @@ The solution demonstrates full-stack integration, modular UI architecture, respo
 
 ## Contents
 
-- Overview  
-- Features  
-- Tech Stack  
-- Project Structure  
-- How to Run  
-- Screenshots  
-- Notes  
-
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [How to Run](#how-to-run-the-project)
+- [Screenshots](#screenshots)
+- [Notes](#notes)
 ---
 
 ## Features
@@ -172,3 +171,16 @@ http://localhost:5173
 This implementation focuses on delivering the core functional aspects of the dashboard builder challenge including widget configuration workflow, analytics visualization, and customer order integration.
 
 Enhancements such as persistent dashboard layout storage, advanced drag-grid snapping, and configurable widget settings panels can be implemented in future iterations.
+
+---
+
+## Author
+
+**Vishnu Prathap**
+
+- GitHub: https://github.com/bootbeat  
+- Email:  vishnu17579@gmail.com 
+- Role: Full Stack Engineer Candidate  
+
+This project was developed as part of the Halleyx Full Stack Engineer Challenge II submission.
+
