@@ -1,30 +1,22 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 
-const inputStyle = {
-  width: "100%",
-  padding: "12px",
-  marginBottom: "12px",
-  borderRadius: "8px",
-  border: "1px solid #1f2937",
-  background: "#020617",
-  color: "white",
-  fontSize: "15px"
-}
-
 export default function Orders(){
 
-  const [orders,setOrders] = useState([])
-
-  const [form,setForm] = useState({
+  const emptyForm = {
+    id:null,
     firstName:"",
     lastName:"",
     email:"",
     product:"Fiber Internet 300 Mbps",
-    qty:1,
-    price:50,
+    qty:"",
+    price:"",
     status:"Pending"
-  })
+  }
+
+  const [orders,setOrders] = useState([])
+  const [form,setForm] = useState(emptyForm)
+  const [editing,setEditing] = useState(false)
 
   function load(){
     axios.get("http://localhost:5000/orders")
@@ -33,14 +25,37 @@ export default function Orders(){
 
   useEffect(load,[])
 
-  function create(){
-    if(!form.firstName || !form.lastName || !form.email)
-      return alert("Please fill mandatory fields")
+  function submit(){
 
-    axios.post("http://localhost:5000/orders",{
+    if(!form.firstName || !form.lastName || !form.email){
+      alert("Please fill mandatory fields")
+      return
+    }
+
+    const payload = {
       ...form,
-      total: Number(form.qty)*Number(form.price)
-    }).then(load)
+      total: Number(form.qty) * Number(form.price)
+    }
+
+    if(editing){
+      axios.put(`http://localhost:5000/orders/${form.id}`,payload)
+        .then(()=>{
+          setForm(emptyForm)
+          setEditing(false)
+          load()
+        })
+    }else{
+      axios.post("http://localhost:5000/orders",payload)
+        .then(()=>{
+          setForm(emptyForm)
+          load()
+        })
+    }
+  }
+
+  function editOrder(o){
+    setForm(o)
+    setEditing(true)
   }
 
   function remove(id){
@@ -49,89 +64,174 @@ export default function Orders(){
   }
 
   return(
-    <div style={{
-      maxWidth:420,
-      padding:20
-    }}>
-      <h2 style={{marginBottom:15}}>Create Order</h2>
+    <div>
 
-      <input style={inputStyle} placeholder="First Name"
-        onChange={e=>setForm({...form,firstName:e.target.value})} />
+      <h3 style={{marginBottom:20}}>
+        {editing ? "Edit Order" : "Create Order"}
+      </h3>
 
-      <input style={inputStyle} placeholder="Last Name"
-        onChange={e=>setForm({...form,lastName:e.target.value})} />
+      {/* ⭐ BEAUTIFUL DARK STACKED FORM */}
 
-      <input style={inputStyle} placeholder="Email"
-        onChange={e=>setForm({...form,email:e.target.value})} />
+      <div style={{
+        display:"flex",
+        flexDirection:"column",
+        gap:12,
+        maxWidth:420
+      }}>
 
-      <select style={inputStyle}
-        onChange={e=>setForm({...form,product:e.target.value})}>
-        <option>Fiber Internet 300 Mbps</option>
-        <option>5GUnlimited Mobile Plan</option>
-        <option>Fiber Internet 1 Gbps</option>
-        <option>Business Internet 500 Mbps</option>
-      </select>
+        <input
+          placeholder="First Name"
+          value={form.firstName}
+          onChange={e=>setForm({...form,firstName:e.target.value})}
+          style={inputStyle}
+        />
 
-      <div style={{display:"flex",gap:10}}>
-        <input style={{...inputStyle,flex:1}} type="number"
-          placeholder="Qty"
-          onChange={e=>setForm({...form,qty:e.target.value})} />
+        <input
+          placeholder="Last Name"
+          value={form.lastName}
+          onChange={e=>setForm({...form,lastName:e.target.value})}
+          style={inputStyle}
+        />
 
-        <input style={{...inputStyle,flex:1}} type="number"
-          placeholder="Unit Price"
-          onChange={e=>setForm({...form,price:e.target.value})} />
+        <input
+          placeholder="Email"
+          value={form.email}
+          onChange={e=>setForm({...form,email:e.target.value})}
+          style={inputStyle}
+        />
+
+        <select
+          value={form.product}
+          onChange={e=>setForm({...form,product:e.target.value})}
+          style={inputStyle}
+        >
+          <option>Fiber Internet 300 Mbps</option>
+          <option>5GUnlimited Mobile Plan</option>
+          <option>Fiber Internet 1 Gbps</option>
+          <option>Business Internet 500 Mbps</option>
+          <option>VoIP Corporate Package</option>
+        </select>
+
+        <div style={{display:"flex",gap:10}}>
+          <input
+            placeholder="Qty"
+            type="number"
+            value={form.qty}
+            onChange={e=>setForm({...form,qty:e.target.value})}
+            style={{...inputStyle,flex:1}}
+          />
+
+          <input
+            placeholder="Unit Price"
+            type="number"
+            value={form.price}
+            onChange={e=>setForm({...form,price:e.target.value})}
+            style={{...inputStyle,flex:1}}
+          />
+        </div>
+
+        <select
+          value={form.status}
+          onChange={e=>setForm({...form,status:e.target.value})}
+          style={inputStyle}
+        >
+          <option>Pending</option>
+          <option>In progress</option>
+          <option>Completed</option>
+        </select>
+
+        <button
+          onClick={submit}
+          style={submitBtn}
+        >
+          {editing ? "Update Order" : "Submit Order"}
+        </button>
+
       </div>
 
-      <select style={inputStyle}
-        onChange={e=>setForm({...form,status:e.target.value})}>
-        <option>Pending</option>
-        <option>In progress</option>
-        <option>Completed</option>
-      </select>
+      <hr style={{
+        margin:"25px 0",
+        borderColor:"#374151"
+      }}/>
 
-      <button
-        onClick={create}
-        style={{
-          padding:"12px 20px",
-          background:"#22c55e",
-          border:"none",
-          borderRadius:8,
-          fontSize:15,
-          cursor:"pointer"
-        }}
-      >
-        Submit Order
-      </button>
-
-      <hr style={{margin:"20px 0"}}/>
+      {/* ⭐ BEAUTIFUL ORDER LIST (BLACK STYLE) */}
 
       {orders.map(o=>(
-        <div key={o.id} style={{
-          padding:"10px 0",
-          borderBottom:"1px solid #1f2937",
-          display:"flex",
-          justifyContent:"space-between",
-          alignItems:"center"
-        }}>
-          <span>
-            {o.firstName} {o.lastName} — {o.product} — ${o.total}
-          </span>
+        <div
+          key={o.id}
+          style={{
+            padding:"12px 0",
+            borderBottom:"1px solid #1f2937"
+          }}
+        >
+          <div style={{
+            display:"flex",
+            justifyContent:"space-between",
+            alignItems:"center"
+          }}>
+            <div>
+              {o.firstName} {o.lastName} — {o.product} — ${o.total}
+            </div>
 
-          <button
-            onClick={()=>remove(o.id)}
-            style={{
-              background:"#ef4444",
-              border:"none",
-              color:"white",
-              padding:"6px 10px",
-              borderRadius:6,
-              cursor:"pointer"
-            }}
-          >
-            Delete
-          </button>
+            <div style={{display:"flex",gap:8}}>
+              <button
+                onClick={()=>editOrder(o)}
+                style={editBtn}
+              >
+                Edit
+              </button>
+
+              <button
+                onClick={()=>remove(o.id)}
+                style={deleteBtn}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       ))}
+
     </div>
   )
+}
+
+/* ⭐ styles */
+
+const inputStyle = {
+  width:"100%",
+  padding:"12px",
+  borderRadius:8,
+  border:"1px solid #1f2937",
+  background:"#020617",
+  color:"white",
+  outline:"none"
+}
+
+const submitBtn = {
+  background:"#22c55e",
+  border:"none",
+  padding:"12px",
+  borderRadius:8,
+  color:"white",
+  fontWeight:"bold",
+  cursor:"pointer"
+}
+
+const editBtn = {
+  background:"#3b82f6",
+  border:"none",
+  padding:"6px 12px",
+  borderRadius:6,
+  color:"white",
+  cursor:"pointer"
+}
+
+const deleteBtn = {
+  background:"#ef4444",
+  border:"none",
+  padding:"6px 12px",
+  borderRadius:6,
+  color:"white",
+  cursor:"pointer"
 }

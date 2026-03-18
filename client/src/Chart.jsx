@@ -1,11 +1,18 @@
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
 import {
-  PieChart, Pie, Cell, Tooltip,
-  BarChart, Bar, XAxis, YAxis, ResponsiveContainer
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend
 } from "recharts"
-
-const COLORS = ["#22c55e","#3b82f6","#f97316","#a855f7","#ef4444"]
 
 export default function Chart(){
 
@@ -13,51 +20,84 @@ export default function Chart(){
 
   useEffect(()=>{
     axios.get("http://localhost:5000/orders")
-      .then(r=>setData(r.data))
+      .then(res=>{
+
+        const orders = res.data
+
+        const grouped = {}
+
+        orders.forEach(o=>{
+          if(!grouped[o.product]){
+            grouped[o.product] = 0
+          }
+          grouped[o.product] += Number(o.total)
+        })
+
+        const formatted = Object.keys(grouped).map(p=>({
+          product:p,
+          revenue:grouped[p]
+        }))
+
+        setData(formatted)
+      })
   },[])
 
-  function grouped(){
-    const map={}
-    data.forEach(o=>{
-      map[o.product]=(map[o.product]||0)+1
-    })
-    return Object.keys(map).map(k=>({
-      name:k,
-      value:map[k]
-    }))
-  }
-
-  const chartData = grouped()
+  const colors = ["#22c55e","#3b82f6","#f59e0b","#ef4444","#8b5cf6"]
 
   return(
-    <div style={{width:"100%",height:300}}>
-      <h3 style={{marginBottom:10}}>Product Analytics</h3>
+    <div style={{height:420}}>
 
-      <ResponsiveContainer width="100%" height={140}>
-        <PieChart>
-          <Pie
-            data={chartData}
-            dataKey="value"
-            nameKey="name"
-            outerRadius={60}
-            label
-          >
-            {chartData.map((e,i)=>(
-              <Cell key={i} fill={COLORS[i % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip/>
-        </PieChart>
-      </ResponsiveContainer>
+      <h3 style={{
+        textAlign:"center",
+        marginBottom:10
+      }}>
+        Product Analytics
+      </h3>
 
-      <ResponsiveContainer width="100%" height={140}>
-        <BarChart data={chartData}>
-          <XAxis dataKey="name"/>
-          <YAxis/>
-          <Tooltip/>
-          <Bar dataKey="value" fill="#3b82f6"/>
-        </BarChart>
-      </ResponsiveContainer>
+      {/* ✅ PIE CHART */}
+      <div style={{height:220}}>
+        <ResponsiveContainer>
+          <PieChart margin={{ top:25 }}>
+            <Pie
+              data={data}
+              dataKey="revenue"
+              nameKey="product"
+              outerRadius={60}
+              label={({ value }) => `$${value}`}
+            >
+              {data.map((entry,index)=>(
+                <Cell
+                  key={index}
+                  fill={colors[index % colors.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip/>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* ✅ BAR CHART */}
+      <div style={{height:180}}>
+        <ResponsiveContainer>
+          <BarChart data={data}>
+            <CartesianGrid stroke="#1f2937"/>
+            <XAxis
+              dataKey="product"
+              stroke="#94a3b8"
+            />
+            <YAxis stroke="#94a3b8"/>
+            <Tooltip/>
+            <Legend/>
+            <Bar
+              dataKey="revenue"
+              fill="#3b82f6"
+              radius={[6,6,0,0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
     </div>
   )
 }
